@@ -7,6 +7,28 @@ async function showBookList() {
     books.forEach(showBook)
 }
 
+
+async function updateBook(id, quantity) {
+    // Update the book
+    let response = await fetch('http://localhost:3001/updateBook', {
+        method: 'PATCH',
+        headers: {
+            'Content-Type': 'application/json',            
+        },
+        body: JSON.stringify({
+            "id": id,
+            "quantity": quantity
+        }),
+    });
+    // Convert to JSON
+    let updatedBook = await response.json();
+
+    // Log the result
+    console.log(updatedBook);
+}
+
+
+
 function showBook(book)
 {
     let div = document.createElement('div');
@@ -26,7 +48,20 @@ function showBook(book)
     let inputSubmitButton = document.createElement('input');
     inputSubmitButton.id  = `button_book${book.id}`; 
     inputSubmitButton.setAttribute('type', 'button');
-    inputSubmitButton.setAttribute('value', "Save");    
+    inputSubmitButton.setAttribute('value', "Save");
+    inputSubmitButton.onclick = function(e)
+    {       
+        // Get the book ID
+        let bookID = parseInt(this.id.replace('button_book',''));
+        // Generate the input text text ID
+        let textID =  `text_book${bookID}`;         
+        let quantity = document.getElementById(textID).value;        
+        console.log("ID = " + bookID);
+        console.log("Qty = " + quantity);
+        updateBook(bookID, quantity);
+        e.preventDefault();
+        e.stopPropagation();
+    }
     div.appendChild(inputSubmitButton);
 
     let root = document.getElementById('root');
